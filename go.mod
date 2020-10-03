@@ -1,1 +1,1 @@
-module wxapi
+module "github.com/cjphaha/wxapi"
