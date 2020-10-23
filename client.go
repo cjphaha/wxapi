@@ -6,9 +6,7 @@ import (
 	"crypto/md5"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -25,12 +23,12 @@ type PayClient struct {
 }
 
 type CommonClient struct {
-	account *CommonAccount
+	account *Account
 	signType string
 }
 
 // 创建微信支付客户端
-func NewClient(account *PayAccount) *PayClient {
+func NewPayClient(account *PayAccount) *PayClient {
 	return &PayClient{
 		account:              account,
 		signType:             MD5,
@@ -40,7 +38,7 @@ func NewClient(account *PayAccount) *PayClient {
 }
 
 //创建普通微信客户端
-func NewCommonClient(account *CommonAccount) *CommonClient{
+func NewClient(account *Account) *CommonClient{
 	return &CommonClient{
 		account: account,
 		signType: MD5,
@@ -190,30 +188,4 @@ func (c *PayClient) OrderQuery(params Params) (Params, error) {
 		return nil, err
 	}
 	return c.processResponseXml(xmlStr)
-}
-//获取SeccsionKey
-func (c *CommonClient)GetSessiocKey(code string)  UnionIdBody{
-	strings :="https://api.weixin.qq.com/sns/jscode2session?appid=" + c.account.appID + "&secret=" + c.account.appSecret +"&js_code=" + code + "&grant_type=authorization_code";
-	fmt.Println(strings);
-	client := &http.Client{};
-	resp, err := client.Get(strings);//get请求
-	defer resp.Body.Close();
-	body, err := ioutil.ReadAll(resp.Body)//body是返回的数据
-	if err != nil {//错误处理
-		fmt.Println(err);
-	}
-	var strrr UnionIdBody; //这里是转化成结构体的
-	err = json.Unmarshal(body, &strrr);
-	if err != nil {
-		fmt.Println("error:",err);
-	}
-	fmt.Println("session_key:  ",strrr);
-	return strrr;
-}
-//主解密函数
-func (c *CommonClient)Decode(sessionKey,iv,encryptedData string) (*WxUserInfo){
-	pc := NewWXUserDataCrypt(c.account.appID, sessionKey)
-	userInfo, _ := pc.Decrypt(encryptedData, iv)
-	fmt.Println(userInfo)
-	return userInfo;
 }

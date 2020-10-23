@@ -33,13 +33,13 @@ func (a *PayAccount) SetCertData(certPath string) {
 	a.certData = certData
 }
 
-type CommonAccount struct {
+type Account struct {
 	appID string
 	appSecret string
 }
 
-func NewCommonAccount(appID,appSecret string) *CommonAccount{
-	return &CommonAccount{
+func NewAccount(appID,appSecret string) *Account{
+	return &Account{
 		appID: appID,
 		appSecret: appSecret,
 	}

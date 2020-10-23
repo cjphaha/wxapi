@@ -1,7 +1,7 @@
 package wxapi
 
 //用户发送的请求
-type UserInfo struct {
+type EncryptedUserInfo struct {
 	NickName string
 	Gender int
 	City string

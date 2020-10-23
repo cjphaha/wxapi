@@ -1,8 +1,11 @@
 package wxapi
-
+/*
+常用的接口和变量
+ */
 import "errors"
 
 const (
+	SessionkeyUrl              = "https://api.weixin.qq.com/sns/jscode2session"
 	Fail                       = "FAIL"
 	Success                    = "SUCCESS"
 	HMACSHA256                 = "HMAC-SHA256"

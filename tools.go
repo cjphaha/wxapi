@@ -11,6 +11,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"hash"
 	"strconv"
 	"strings"
@@ -159,4 +160,12 @@ func pkcs7Unpad(data []byte, blockSize int) ([]byte, error) {
 		}
 	}
 	return data[:len(data)-n], nil
+}
+
+//主解密函数
+func (c *CommonClient)Decode(sessionKey,iv,encryptedData string) (*WxUserInfo){
+	pc := NewWXUserDataCrypt(c.account.appID, sessionKey)
+	userInfo, _ := pc.Decrypt(encryptedData, iv)
+	fmt.Println(userInfo)
+	return userInfo;
 }
