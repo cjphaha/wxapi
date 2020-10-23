@@ -11,7 +11,7 @@ $ go get github.com/cjphaha/wxapi
 ## go modules
 
 ```cgo
-require github.com/cjphaha/wxapi v0.0.2
+require github.com/cjphaha/wxapi
 ```
 ## 常量
 
@@ -39,19 +39,63 @@ type Account struct {
 
 ## 接口说明
 
-|       函数名       |            功能             |            参数             |    返回值     | 参数说明                       |
-| :----------------: | :-------------------------: | :-------------------------: | :-----------: | ------------------------------ |
-|     NewAccount     |      初始化开发者账号       |  (appID,appSecret string)   |   *Account    | 开发者的appid和appserect       |
-|     NewClient      |  创建普通微信开发者客户端   |     (account *Account)      | *CommonClient | 账户信息，包括appid和appserect |
-|       Jiemi        | 解密用户的信息，获取UnionID |                             |               |                                |
-|   GetSessionKey    |       获取sessionkey        | (code ,appid,secret string) |  UnionIdBody  | code是用户在微信小程序中获取的 |
-| GetDecryptUserInfo |       获取解密的信息        |  微信小程序提供的加密信息   | 解密后的信息  | 参数由微信小程序提供           |
+|       函数名       |           功能           |            参数             |    返回值     | 参数说明                       |
+| :----------------: | :----------------------: | :-------------------------: | :-----------: | ------------------------------ |
+|     NewAccount     |     初始化开发者账号     |  (appID,appSecret string)   |   *Account    | 开发者的appid和appserect       |
+|     NewClient      | 创建普通微信开发者客户端 |     (account *Account)      | *CommonClient | 账户信息，包括appid和appserect |
+|   GetSessionKey    |      获取sessionkey      | (code ,appid,secret string) |  UnionIdBody  | code是用户在微信小程序中获取的 |
+| GetDecryptUserInfo |      获取解密的信息      |  微信小程序提供的加密信息   | 解密后的信息  | 参数由微信小程序提供           |
 
 ## 样例
 
+在gin框架中定义如下接口
 
+```go
+func Register(c *gin.Context){
+	var Temp wxapi.EncryptedUserInfo
+	c.Bind(&Temp)
+	account := wxapi.NewAccount("开发者AppId,"开发者Appsecret")
+	client := wxapi.NewClient(account)
+	data := client.GetDecryptUserInfo(Temp)
+	c.JSON(http.StatusOK,gin.H{
+		"DecryptedData":data,
+	})
+}
+```
 
+发送POST请求，请求体为：
 
+```json
+{
+    "signature":"sadshdiu27ey3w79rfeiusdhaqw21e38red98",
+    "encryptedData": "aLHwTFyAnVVzjl1fDNCDoO88WO25ViWAzgRM06bX0Vgq0CQtHHXp2gGdWTUIo1G4y/+4T0U9U9zCwROQKLmCSK4nePShimlsvFpnj0d30YTe/+qeweqwewsdqsdxasxasxadw/dqwdasdasdasdawdasdaasdas/sadr00p5js2IIqwqBXcpux5JgD9O/Tc1teKIJGqe8JkwMUbPsuNVR130n0w+JE8u4QZpiZ4QHUI0zqRLRzdoMnAZFZLkxw2C6BPP+Uj+tqlmSMTlILh/LR0R5sIrABhCPsKmMeeEsVRATQe6XHpkgN7ziPyDJ5ulVZEnu6RYEzYNq300dxSGae1mT/sulkEFcx7bjPs3KiCR1JTcU3FLxNis6vWKsP3OXc4LTWl5ekoDxajwpQ9tGJFscKEp/UPrQ=",
+    "iv": "6LqweRFb8UKX/sXT5/C0sQ==",
+    "code": "0qweqweqwV1Ia17JBT821RrGi"
+}
+```
+
+接口返回的数据为：
+
+```json
+{
+    "DecryptedData": {
+        "id": 0,
+        "openId": "oKJKf4udasdaqqweqweaxAiGdS3S2Y",
+        "unionId": "o_79T5oh0a2casddYlgQsqIKWn79Y",
+        "nickName": "王小二",
+        "gender": 1,
+        "city": "Nanjing",
+        "province": "Jiangsu",
+        "country": "China",
+        "avatarUrl": "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJB3WhdjBiaQ2t82y3CSFwoeIU8vuWUfiblrHwSpqDlicnLVJWSfzyq42nE8Ok647uAasdasdasbjlNibvEA/132",
+        "language": "zh_CN",
+        "watermark": {
+            "timestamp": 16034352582,
+            "appid": "wasasdj3599dWsz3b"
+        }
+    }
+}
+```
 
 
 
