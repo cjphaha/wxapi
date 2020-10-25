@@ -5,6 +5,7 @@ import "strconv"
 type Params map[string]string
 
 // map本来已经是引用类型了，所以不需要 *Params
+//这里全部return p是为了进行链式操作
 func (p Params) SetString(k, s string) Params {
 	p[k] = s
 	return p

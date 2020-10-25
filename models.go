@@ -39,3 +39,22 @@ type UnionIdBody struct {
 	Session_key string
 	Openid     string
 }
+
+type AccessToken struct {
+	Access_token  string
+	Expires_in    int
+	Refresh_token string
+	Openid        string
+	Scope         string
+}
+
+type WebUserInfo struct {
+	Openid     string
+	Nickname   string
+	Sex        int
+	Province   string
+	City       string
+	Country    string
+	Headimgurl string
+	Unionid    string
+}

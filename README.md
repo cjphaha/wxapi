@@ -37,16 +37,31 @@ type Account struct {
 
 > 用session_key获取的
 
+> 微信内网页登陆授权码
+
+```go
+type AccessToken struct {
+    Access_token  string
+    Expires_in    int
+    Refresh_token string
+    Openid        string
+    Scope         string
+}
+```
+
 ## 接口说明
 
-|       函数名       |           功能           |            参数             |    返回值     | 参数说明                       |
-| :----------------: | :----------------------: | :-------------------------: | :-----------: | ------------------------------ |
-|     NewAccount     |     初始化开发者账号     |  (appID,appSecret string)   |   *Account    | 开发者的appid和appserect       |
-|     NewClient      | 创建普通微信开发者客户端 |     (account *Account)      | *CommonClient | 账户信息，包括appid和appserect |
-|   GetSessionKey    |      获取sessionkey      | (code ,appid,secret string) |  UnionIdBody  | code是用户在微信小程序中获取的 |
-| GetDecryptUserInfo |      获取解密的信息      |  微信小程序提供的加密信息   | 解密后的信息  | 参数由微信小程序提供           |
+|       函数名       |                功能                |            参数             |    返回值     | 参数说明                         |
+| :----------------: | :--------------------------------: | :-------------------------: | :-----------: | -------------------------------- |
+|     NewAccount     |          初始化开发者账号          |  (appID,appSecret string)   |   *Account    | 开发者的appid和appserect         |
+|     NewClient      |      创建普通微信开发者客户端      |     (account *Account)      | *CommonClient | 账户信息，包括appid和appserect   |
+|   GetSessionKey    |           获取sessionkey           | (code ,appid,secret string) |  UnionIdBody  | code是用户在微信小程序中获取的   |
+| GetDecryptUserInfo |           获取解密的信息           |  微信小程序提供的加密信息   | 解密后的信息  | 参数由微信小程序提供             |
+|  GetWebSessionKey  | 获取在微信网页内登陆时的sessionkey |            code             |  AccessToken  | 微信网页登陆时有微信的js-sdk获取 |
 
 ## 样例
+
+#### 微信小程序登陆
 
 在gin框架中定义如下接口
 
@@ -94,6 +109,20 @@ func Register(c *gin.Context){
             "appid": "wasasdj3599dWsz3b"
         }
     }
+}
+```
+
+#### 微信网页登陆
+
+```go
+func Register(c *gin.Context){
+	account := wxapi.NewAccount("开发者AppId,"开发者Appsecret")
+	client := wxapi.NewClient(account)
+  code := c.Query("code")
+	data := client.GetWebUserInfo(code)
+	c.JSON(http.StatusOK,gin.H{
+		"UserInfo":data,
+	})
 }
 ```
 
